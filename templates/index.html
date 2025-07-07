@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Movie Recommender System</title>
+    <style>
+        body {
+            background-color: #0f0f0f;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+        }
+
+        .form-container {
+            width: 480px; /* Increased width */
+            max-width: 90vw;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        input[list], button {
+            padding: 12px;
+            font-size: 1rem;
+            border-radius: 6px;
+            border: none;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        input[list] {
+            background-color: #1c1c1c;
+            color: white;
+        }
+
+        button {
+            background-color: #ff4b4b;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #e04040;
+        }
+
+        .movies {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .movie {
+            max-width: 160px;
+            text-align: center;
+        }
+
+        .movie img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .movie-title {
+            margin-top: 10px;
+            font-size: 0.95rem;
+            color: #ccc;
+        }
+
+        /* Optional: Style datalist dropdown in Chrome-based browsers */
+        input::-webkit-calendar-picker-indicator {
+            display: none;
+        }
+
+        /* Firefox fix for font color inside datalist */
+        input:-moz-ui-invalid {
+            box-shadow: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Movie Recommender System</h1>
+
+    <form class="form-container" method="post" action="/recommend">
+        <input list="movies" name="movie" placeholder="Start typing a movie..." required autocomplete="off">
+        <datalist id="movies">
+            {% for title in movie_list %}
+                <option value="{{ title }}"></option>
+            {% endfor %}
+        </datalist>
+        <button type="submit">Recommend</button>
+    </form>
+
+    <div class="movies">
+        {% for title, poster in recommended_movies %}
+        <div class="movie">
+            {% if poster != "N/A" %}
+                <img src="{{ poster }}" alt="{{ title }}">
+            {% endif %}
+            <div class="movie-title">{{ title }}</div>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>
+
+
+
