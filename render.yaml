@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: movies-boxx
+    runtime: python
+    buildCommand: ./build-render.sh
+    startCommand: gunicorn app:app
