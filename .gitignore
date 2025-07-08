@@ -10,7 +10,7 @@ __pycache__/
 *.pyd
 
 # Large files / model files
-*.pkl
+# *.pkl  <-- Comment this out or delete this line
 
 # OS-specific files
 .DS_Store
@@ -25,4 +25,3 @@ Thumbs.db
 
 # Jupyter Notebook checkpoints
 .ipynb_checkpoints/
-
