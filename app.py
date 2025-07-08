@@ -2,6 +2,7 @@ from flask import Flask, render_template, request
 import pickle
 import requests
 import os
+import sys
 
 app = Flask(__name__)
 
@@ -18,9 +19,11 @@ def download_similarity():
             f.write(response.content)
         print("Downloaded similarity.pkl")
 
-# Step 2: Load models
+# Download similarity.pkl
 download_similarity()
-movies = pickle.load(open('movies.pkl', 'rb'))  # DataFrame
+
+# Step 2: Load models
+movies = pickle.load(open('movies.pkl', 'rb'))  # Ensure movies.pkl is committed
 similarity = pickle.load(open(SIMILARITY_PATH, 'rb'))
 
 movie_titles = movies['title'].values
@@ -60,7 +63,12 @@ def recommend_route():
     recommendations = recommend(selected_movie)
     return render_template('index.html', movie_list=movie_titles, recommended_movies=recommendations, selected_movie=selected_movie)
 
+# Step 6: Optional build mode
 if __name__ == '__main__':
-    app.run(debug=True)
+    if '--download-only' in sys.argv:
+        print("Download-only mode: Exiting after downloading similarity.pkl")
+    else:
+        app.run(debug=True)
+
 
 

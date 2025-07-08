@@ -1,7 +1,7 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
-# Upgrade pip to the latest version
-pip install --upgrade pip
+echo "Installing dependencies..."
+pip install -r requirements.txt
 
-# Install all dependencies using binary wheels (faster, avoids build errors)
-pip install --only-binary=:all: -r requirements.txt
+echo "Downloading similarity.pkl for the app..."
+python app.py --download-only
