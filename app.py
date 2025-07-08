@@ -2,33 +2,25 @@ from flask import Flask, render_template, request
 import pickle
 import requests
 import os
-import sys
 
 app = Flask(__name__)
 
-# Google Drive direct download link for similarity.pkl
-SIMILARITY_URL = "https://drive.google.com/uc?export=download&id=1eaRn28XCyrjwzAhWfB_C8yNHtRSNK3Mi"
+# Step 1: Load models
 SIMILARITY_PATH = "similarity.pkl"
+MOVIES_PATH = "movies.pkl"
 
-# Step 1: Download similarity.pkl from Google Drive if missing
-def download_similarity():
-    if not os.path.exists(SIMILARITY_PATH):
-        print("Downloading similarity.pkl from Google Drive...")
-        response = requests.get(SIMILARITY_URL)
-        with open(SIMILARITY_PATH, "wb") as f:
-            f.write(response.content)
-        print("Downloaded similarity.pkl")
+# Ensure the required files exist
+if not os.path.exists(SIMILARITY_PATH):
+    raise FileNotFoundError("similarity.pkl not found. It should be downloaded during build.")
 
-# Download similarity.pkl
-download_similarity()
+if not os.path.exists(MOVIES_PATH):
+    raise FileNotFoundError("movies.pkl not found. Please make sure it's in your repo.")
 
-# Step 2: Load models
-movies = pickle.load(open('movies.pkl', 'rb'))  # Ensure movies.pkl is committed
+movies = pickle.load(open(MOVIES_PATH, 'rb'))  # DataFrame
 similarity = pickle.load(open(SIMILARITY_PATH, 'rb'))
-
 movie_titles = movies['title'].values
 
-# Step 3: Fetch poster from OMDB
+# Step 2: Fetch poster from OMDB
 def get_movie_poster(title):
     formatted_title = title.replace(" ", "+")
     url = f"https://www.omdbapi.com/?t={formatted_title}&apikey=a2d175f4"
@@ -36,7 +28,7 @@ def get_movie_poster(title):
     data = response.json()
     return data.get("Poster")
 
-# Step 4: Recommend movies using similarity matrix
+# Step 3: Recommend movies using similarity matrix
 def recommend(movie):
     if movie not in movies['title'].values:
         return []
@@ -52,7 +44,7 @@ def recommend(movie):
         recommendations.append((title, poster))
     return recommendations
 
-# Step 5: Flask routes
+# Step 4: Flask routes
 @app.route('/', methods=['GET'])
 def home():
     return render_template('index.html', movie_list=movie_titles, recommended_movies=[], selected_movie="")
@@ -63,12 +55,6 @@ def recommend_route():
     recommendations = recommend(selected_movie)
     return render_template('index.html', movie_list=movie_titles, recommended_movies=recommendations, selected_movie=selected_movie)
 
-# Step 6: Optional build mode
+# Step 5: Run the app
 if __name__ == '__main__':
-    if '--download-only' in sys.argv:
-        print("Download-only mode: Exiting after downloading similarity.pkl")
-    else:
-        app.run(debug=True)
-
-
-
+    app.run(debug=True)
