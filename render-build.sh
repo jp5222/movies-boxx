@@ -1,5 +1,8 @@
 #!/bin/bash
 
+echo "Setting up Python environment..."
+pip install --upgrade pip setuptools wheel
+
 echo "Installing dependencies..."
 pip install -r requirements.txt
 
